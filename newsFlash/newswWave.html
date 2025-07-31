@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>News Site</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* CSS Variables for theming */
+    :root {
+      --primary-color: #2c3e50;
+      --primary-hover: #34495e;
+      --danger-color: #e74c3c;
+      --danger-hover: #c0392b;
+      --text-color: #333;
+      --text-light: #666;
+      --text-lighter: #7f8c8d;
+      --bg-color: #f5f5f5;
+      --white: #fff;
+      --error-bg: #fadbd8;
+      --error-text: #e74c3c;
+      --success-bg: #d5f5e3;
+      --success-text: #28a745;
+      --border-radius: 5px;
+      --box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      --transition: all 0.3s ease;
+    }
+
+    /* Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Arial', sans-serif;
+      line-height: 1.6;
+      color: var(--text-color);
+      background-color: var(--bg-color);
+    }
+    
+    a {
+      text-decoration: none;
+      color: inherit;
+      transition: var(--transition);
+    }
+
+    button, [role="button"] {
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    button:focus, a:focus, input:focus, textarea:focus {
+      outline: 2px solid var(--primary-color);
+      outline-offset: 2px;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* Layout Components */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    .flex {
+      display: flex;
+    }
+
+    .justify-between {
+      justify-content: space-between;
+    }
+
+    .items-center {
+      align-items: center;
+    }
+
+    /* Header Styles */
+    header {
+      background: var(--primary-color);
+      color: var(--white);
+      padding: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--box-shadow);
+    }
+    
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    
+    .nav-links a {
+      padding: 0.5rem;
+      border-radius: var(--border-radius);
+    }
+    
+    .nav-links a:hover, .nav-links a:focus {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Card Styles */
+    .card {
+      background: var(--white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      overflow: hidden;
+      transition: var(--transition);
+    }
+    
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .card-img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+    
+    .card-content {
+      padding: 1.5rem;
+    }
+    
+    /* Form Styles */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+      font-family: inherit;
+      transition: var(--transition);
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(44, 62, 80, 0.2);
+    }
+    
+    textarea.form-control {
+      min-height: 200px;
+      resize: vertical;
+    }
+
+    /* Button Styles */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background: var(--primary-color);
+      color: var(--white);
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--border-radius);
+      font-family: inherit;
+      font-weight: 500;
+    }
+    
+    .btn:hover, .btn:focus {
+      background: var(--primary-hover);
+    }
+    
+    .btn-danger {
+      background: var(--danger-color);
+    }
+    
+    .btn-danger:hover, .btn-danger:focus {
+      background: var(--danger-hover);
+    }
+
+    .btn-icon {
+      padding: 0.5rem;
+    }
+
+    .w-100 {
+      width: 100%;
+    }
+
+    /* Utility Classes */
+    .hidden {
+      display: none !important;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .text-muted {
+      color: var(--text-light);
+    }
+
+    .text-small {
+      font-size: 0.9rem;
+    }
+
+    .mt-1 { margin-top: 0.5rem; }
+    .mt-2 { margin-top: 1rem; }
+    .mt-3 { margin-top: 1.5rem; }
+    .mt-4 { margin-top: 2rem; }
+
+    .mb-1 { margin-bottom: 0.5rem; }
+    .mb-2 { margin-bottom: 1rem; }
+    .mb-3 { margin-bottom: 1.5rem; }
+    .mb-4 { margin-bottom: 2rem; }
+
+    .p-1 { padding: 0.5rem; }
+    .p-2 { padding: 1rem; }
+    .p-3 { padding: 1.5rem; }
+    .p-4 { padding: 2rem; }
+
+    /* Alert Styles */
+    .alert {
+      padding: 1rem;
+      border-radius: var(--border-radius);
+      margin-bottom: 1rem;
+    }
+
+    .alert-error {
+      color: var(--error-text);
+      background: var(--error-bg);
+      border: 1px solid var(--error-text);
+    }
+
+    .alert-success {
+      color: var(--success-text);
+      background: var(--success-bg);
+      border: 1px solid var(--success-text);
+    }
+
+    /* Loading State */
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    .spinner {
+      width: 2rem;
+      height: 2rem;
+      border: 3px solid rgba(0,0,0,0.1);
+      border-radius: 50%;
+      border-top-color: var(--primary-color);
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .header-container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .nav-links {
+        width: 100%;
+        justify-content: space-around;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <h1>Latest News</h1>
+      <div class="nav-links">
+        <a href="#" id="viewSite" aria-label="View site"><i class="fas fa-home"></i> View Site</a>
+        <a href="#" id="adminLink" class="hidden" aria-label="Admin dashboard"><i class="fas fa-cog"></i> Admin</a>
+        <a href="#" id="loginLink" aria-label="Login"><i class="fas fa-sign-in-alt"></i> Login</a>
+        <a href="#" id="logoutLink" class="hidden" aria-label="Logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Loading State -->
+    <div id="loadingView" class="loading hidden">
+      <div class="spinner" aria-hidden="true"></div>
+      <span class="sr-only">Loading...</span>
+    </div>
+
+    <!-- Public View -->
+    <div id="publicView">
+      <div id="articlesContainer" class="mt-4"></div>
+    </div>
+
+    <!-- Admin View -->
+    <div id="adminView" class="hidden">
+      <div class="card p-4 mt-4">
+        <section class="add-article mb-4">
+          <h2 class="mb-2">Add New Article</h2>
+          <form id="addArticleForm">
+            <div class="form-group mb-2">
+              <label for="title" class="form-label">Title</label>
+              <input type="text" id="title" class="form-control" required maxlength="100" aria-required="true">
+            </div>
+            <div class="form-group mb-2">
+              <label for="content" class="form-label">Content</label>
+              <textarea id="content" class="form-control" required maxlength="5000" aria-required="true"></textarea>
+            </div>
+            <div class="form-group mb-3">
+              <label for="image" class="form-label">Image (optional, max 2MB)</label>
+              <input type="file" id="image" class="form-control" accept="image/jpeg, image/png" aria-describedby="imageHelp">
+              <div id="imageHelp" class="text-muted text-small">Only JPEG or PNG images allowed</div>
+            </div>
+            <div id="addArticleError" class="alert alert-error hidden mb-2"></div>
+            <button type="submit" class="btn" aria-label="Publish article">
+              <i class="fas fa-paper-plane"></i> Publish Article
+            </button>
+          </form>
+        </section>
+
+        <section class="article-list">
+          <h2 class="mb-2">Existing Articles</h2>
+          <div id="adminArticlesContainer"></div>
+        </section>
+      </div>
+    </div>
+
+    <!-- Login View -->
+    <div id="loginView" class="hidden">
+      <div class="card p-4 mt-4" style="max-width: 400px; margin: 0 auto;">
+        <h1 class="text-center mb-3">Admin Login</h1>
+        <div id="loginError" class="alert alert-error hidden"></div>
+        <form id="loginForm">
+          <div class="form-group mb-2">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" id="username" class="form-control" required aria-required="true">
+          </div>
+          <div class="form-group mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" id="password" class="form-control" required aria-required="true">
+          </div>
+          <button type="submit" class="btn w-100" aria-label="Login">
+            <i class="fas fa-sign-in-alt"></i> Login
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Article Detail View -->
+    <div id="articleDetailView" class="hidden">
+      <div class="card mt-4">
+        <img id="detailImage" class="card-img" src="" alt="" aria-hidden="true">
+        <div class="card-content">
+          <h2 id="detailTitle" class="mb-1"></h2>
+          <p id="detailContent" class="mb-2"></p>
+          <div class="text-muted text-small">
+            Posted by <span id="detailAuthor"></span> on <span id="detailDate"></span>
+          </div>
+          <button id="backButton" class="btn mt-3" aria-label="Back to home">
+            <i class="fas fa-arrow-left"></i> Back to Home
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success Notification -->
+    <div id="successNotification" class="alert alert-success hidden" style="position: fixed; top: 1rem; right: 1rem; max-width: 300px;"></div>
+  </main>
+
+  <script>
+    /**
+     * News Site Application - Enhanced Version
+     * Includes security improvements, accessibility, and better error handling
+     */
+
+    // Constants
+    const STORAGE_KEYS = {
+      ARTICLES: 'news_site_articles',
+      USER: 'news_site_current_user'
+    };
+
+    const DEFAULT_ARTICLE = {
+      id: '1',
+      title: 'Welcome to Our News Site',
+      content: 'This is a sample article to demonstrate the news site functionality. In a real application, this content would come from a database.',
+      image: 'https://via.placeholder.com/800x400?text=News+Image',
+      author: 'Admin',
+      createdAt: new Date().toISOString()
+    };
+
+    // Application State
+    const state = {
+      articles: [],
+      currentUser: null,
+      currentArticleId: null,
+      isLoading: false
+    };
+
+    // DOM Elements
+    const elements = {
+      views: {
+        public: document.getElementById('publicView'),
+        admin: document.getElementById('adminView'),
+        login: document.getElementById('loginView'),
+        detail: document.getElementById('articleDetailView'),
+        loading: document.getElementById('loadingView')
+      },
+      containers: {
+        articles: document.getElementById('articlesContainer'),
+        adminArticles: document.getElementById('adminArticlesContainer')
+      },
+      links: {
+        viewSite: document.getElementById('viewSite'),
+        admin: document.getElementById('adminLink'),
+        login: document.getElementById('loginLink'),
+        logout: document.getElementById('logoutLink')
+      },
+      forms: {
+        login: document.getElementById('loginForm'),
+        addArticle: document.getElementById('addArticleForm')
+      },
+      buttons: {
+        back: document.getElementById('backButton')
+      },
+      alerts: {
+        loginError: document.getElementById('loginError'),
+        addArticleError: document.getElementById('addArticleError'),
+        success: document.getElementById('successNotification')
+      },
+      detailElements: {
+        title: document.getElementById('detailTitle'),
+        content: document.getElementById('detailContent'),
+        author: document.getElementById('detailAuthor'),
+        date: document.getElementById('detailDate'),
+        image: document.getElementById('detailImage')
+      }
+    };
+
+    // Service Layer
+    const storageService = {
+      getItem(key) {
+        try {
+          return JSON.parse(localStorage.getItem(key));
+        } catch (error) {
+          console.error('Error parsing storage item:', error);
+          return null;
+        }
+      },
+
+      setItem(key, value) {
+        localStorage.setItem(key, JSON.stringify(value));
+      },
+
+      removeItem(key) {
+        localStorage.removeItem(key);
+      }
+    };
+
+    const authService = {
+      async login(username, password) {
+        // In a real app, this would be a fetch to your backend API
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            // Mock authentication - in production, use proper server-side auth
+            if (username === 'admin' && password === 'admin123') {
+              resolve({ 
+                username: 'admin',
+                role: 'admin',
+                token: 'mock-token' // In real app, this would come from your backend
+              });
+            } else {
+              reject(new Error('Invalid username or password'));
+            }
+          }, 500);
+        });
+      },
+
+      logout() {
+        return Promise.resolve();
+      }
+    };
+
+    const articleService = {
+      getArticles() {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            const articles = storageService.getItem(STORAGE_KEYS.ARTICLES) || [DEFAULT_ARTICLE];
+            resolve(articles);
+          }, 300);
+        });
+      },
+
+      saveArticles(articles) {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            storageService.setItem(STORAGE_KEYS.ARTICLES, articles);
+            resolve();
+          }, 300);
+        });
+      },
+
+      addArticle(article) {
+        return this.getArticles().then(articles => {
+          const newArticles = [article, ...articles];
+          return this.saveArticles(newArticles).then(() => newArticles);
+        });
+      },
+
+      deleteArticle(id) {
+        return this.getArticles().then(articles => {
+          const filtered = articles.filter(article => article.id !== id);
+          return this.saveArticles(filtered).then(() => filtered);
+        });
+      }
+    };
+
+    // Security Utilities
+    const security = {
+      sanitizeInput(input) {
+        const div = document.createElement('div');
+        div.textContent = input;
+        return div.innerHTML;
+      },
+
+      sanitizeArticle(article) {
+        return {
+          ...article,
+          title: this.sanitizeInput(article.title),
+          content: this.sanitizeInput(article.content),
+          author: this.sanitizeInput(article.author)
+        };
+      }
+    };
+
+    // UI Utilities
+    const ui = {
+      showLoading() {
+        state.isLoading = true;
+        elements.views.loading.classList.remove('hidden');
+      },
+
+      hideLoading() {
+        state.isLoading = false;
+        elements.views.loading.classList.add('hidden');
+      },
+
+      showView(viewName) {
+        Object.keys(elements.views).forEach(key => {
+          if (key === viewName) {
+            elements.views[key].classList.remove('hidden');
+          } else if (key !== 'loading') {
+            elements.views[key].classList.add('hidden');
+          }
+        });
+      },
+
+      updateAuthUI() {
+        if (state.currentUser) {
+          elements.links.admin.classList.remove('hidden');
+          elements.links.logout.classList.remove('hidden');
+          elements.links.login.classList.add('hidden');
+        } else {
+          elements.links.admin.classList.add('hidden');
+          elements.links.logout.classList.add('hidden');
+          elements.links.login.classList.remove('hidden');
+        }
+      },
+
+      showError(element, message) {
+        element.textContent = message;
+        element.classList.remove('hidden');
+        setTimeout(() => {
+          element.classList.add('hidden');
+        }, 5000);
+      },
+
+      showSuccess(message) {
+        elements.alerts.success.textContent = message;
+        elements.alerts.success.classList.remove('hidden');
+        setTimeout(() => {
+          elements.alerts.success.classList.add('hidden');
+        }, 3000);
+      },
+
+      formatDate(dateString) {
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString(undefined, options);
+      },
+
+      truncateText(text, length = 150) {
+        return text.length > length ? text.substring(0, length) + '...' : text;
+      }
+    };
+
+    // Event Handlers
+    const handlers = {
+      async handleLogin(e) {
+        e.preventDefault();
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
+        
+        if (!username || !password) {
+          ui.showError(elements.alerts.loginError, 'Please enter both username and password');
+          return;
+        }
+
+        ui.showLoading();
+        
+        try {
+          const user = await authService.login(username, password);
+          state.currentUser = user;
+          storageService.setItem(STORAGE_KEYS.USER, user);
+          ui.updateAuthUI();
+          ui.showSuccess('Login successful!');
+          handlers.handleShowAdminView();
+        } catch (error) {
+          ui.showError(elements.alerts.loginError, error.message);
+        } finally {
+          ui.hideLoading();
+        }
+      },
+
+      async handleLogout(e) {
+        e.preventDefault();
+        ui.showLoading();
+        
+        try {
+          await authService.logout();
+          state.currentUser = null;
+          storageService.removeItem(STORAGE_KEYS.USER);
+          ui.updateAuthUI();
+          ui.showSuccess('Logged out successfully');
+          handlers.handleShowPublicView();
+        } catch (error) {
+          console.error('Logout error:', error);
+          ui.showError(elements.alerts.loginError, 'Logout failed. Please try again.');
+        } finally {
+          ui.hideLoading();
+        }
+      },
+
+      async handleAddArticle(e) {
+        e.preventDefault();
+        
+        const title = document.getElementById('title').value.trim();
+        const content = document.getElementById('content').value.trim();
+        const imageFile = document.getElementById('image').files[0];
+        
+        if (!title || !content) {
+          ui.showError(elements.alerts.addArticleError, 'Please fill in all required fields');
+          return;
+        }
+        
+        // Validate image if provided
+        if (imageFile) {
+          if (imageFile.size > 2 * 1024 * 1024) { // 2MB limit
+            ui.showError(elements.alerts.addArticleError, 'Image must be less than 2MB');
+            return;
+          }
+          if (!['image/jpeg', 'image/png'].includes(imageFile.type)) {
+            ui.showError(elements.alerts.addArticleError, 'Only JPEG or PNG images are allowed');
+            return;
+          }
+        }
+        
+        const newArticle = {
+          id: Date.now().toString(),
+          title,
+          content,
+          author: state.currentUser.username,
+          createdAt: new Date().toISOString(),
+          image: ''
+        };
+        
+        ui.showLoading();
+        
+        try {
+          // Sanitize inputs
+          const sanitizedArticle = security.sanitizeArticle(newArticle);
+          
+          // Handle image upload (simplified - in real app this would upload to server)
+          if (imageFile) {
+            sanitizedArticle.image = await handlers.readFileAsDataURL(imageFile);
+          }
+          
+          const updatedArticles = await articleService.addArticle(sanitizedArticle);
+          state.articles = updatedArticles;
+          
+          // Reset form
+          elements.forms.addArticle.reset();
+          
+          // Show success and update views
+          ui.showSuccess('Article published successfully!');
+          renderers.renderArticles();
+          renderers.renderAdminArticles();
+        } catch (error) {
+          console.error('Error adding article:', error);
+          ui.showError(elements.alerts.addArticleError, 'Failed to add article. Please try again.');
+        } finally {
+          ui.hideLoading();
+        }
+      },
+
+      async handleDeleteArticle(id) {
+        if (!confirm('Are you sure you want to delete this article?')) return;
+        
+        ui.showLoading();
+        
+        try {
+          const updatedArticles = await articleService.deleteArticle(id);
+          state.articles = updatedArticles;
+          ui.showSuccess('Article deleted successfully');
+          renderers.renderArticles();
+          renderers.renderAdminArticles();
+        } catch (error) {
+          console.error('Error deleting article:', error);
+          ui.showError(elements.alerts.addArticleError, 'Failed to delete article. Please try again.');
+        } finally {
+          ui.hideLoading();
+        }
+      },
+
+      handleShowPublicView(e) {
+        if (e) e.preventDefault();
+        ui.showView('public');
+        renderers.renderArticles();
+      },
+
+      handleShowAdminView(e) {
+        if (e) e.preventDefault();
+        if (!state.currentUser) {
+          handlers.handleShowLoginView();
+          return;
+        }
+        ui.showView('admin');
+        renderers.renderAdminArticles();
+      },
+
+      handleShowLoginView(e) {
+        if (e) e.preventDefault();
+        ui.showView('login');
+        elements.alerts.loginError.classList.add('hidden');
+        document.getElementById('username').focus();
+      },
+
+      handleShowArticleDetail(id) {
+        const article = state.articles.find(a => a.id === id);
+        if (!article) {
+          handlers.handleShowPublicView();
+          return;
+        }
+        
+        state.currentArticleId = id;
+        const sanitizedArticle = security.sanitizeArticle(article);
+        
+        elements.detailElements.title.textContent = sanitizedArticle.title;
+        elements.detailElements.content.textContent = sanitizedArticle.content;
+        elements.detailElements.author.textContent = sanitizedArticle.author;
+        elements.detailElements.date.textContent = ui.formatDate(sanitizedArticle.createdAt);
+        
+        if (sanitizedArticle.image) {
+          elements.detailElements.image.src = sanitizedArticle.image;
+          elements.detailElements.image.style.display = 'block';
+          elements.detailElements.image.alt = sanitizedArticle.title;
+        } else {
+          elements.detailElements.image.style.display = 'none';
+        }
+        
+        ui.showView('detail');
+      },
+
+      readFileAsDataURL(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = () => reject(new Error('Failed to read file'));
+          reader.readAsDataURL(file);
+        });
+      }
+    };
+
+    // Renderers
+    const renderers = {
+      async renderArticles() {
+        if (state.isLoading) return;
+        
+        let articles = state.articles;
+        if (!articles || articles.length === 0) {
+          articles = await articleService.getArticles();
+          state.articles = articles;
+        }
+        
+        if (articles.length === 0) {
+          elements.containers.articles.innerHTML = '<p class="text-center">No articles found.</p>';
+          return;
+        }
+        
+        elements.containers.articles.innerHTML = articles.map(article => {
+          const sanitized = security.sanitizeArticle(article);
+          return `
+            <div class="card mb-3">
+              ${sanitized.image ? `<img src="${sanitized.image}" class="card-img" alt="${sanitized.title}" loading="lazy">` : ''}
+              <div class="card-content">
+                <h2><a href="#" class="article-link" data-id="${sanitized.id}" aria-label="Read article: ${sanitized.title}">${sanitized.title}</a></h2>
+                <p class="mb-2">${ui.truncateText(sanitized.content)}</p>
+                <div class="text-muted text-small">
+                  Posted by ${sanitized.author} on ${ui.formatDate(sanitized.createdAt)}
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+        
+        // Add event listeners to article links
+        document.querySelectorAll('.article-link').forEach(link => {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            handlers.handleShowArticleDetail(link.dataset.id);
+          });
+        });
+      },
+
+      async renderAdminArticles() {
+        if (state.isLoading) return;
+        
+        let articles = state.articles;
+        if (!articles || articles.length === 0) {
+          articles = await articleService.getArticles();
+          state.articles = articles;
+        }
+        
+        if (articles.length === 0) {
+          elements.containers.adminArticles.innerHTML = '<p class="text-center">No articles found.</p>';
+          return;
+        }
+        
+        elements.containers.adminArticles.innerHTML = articles.map(article => {
+          const sanitized = security.sanitizeArticle(article);
+          return `
+            <div class="card mb-2 p-2">
+              <div class="flex justify-between items-center">
+                <h3>${sanitized.title}</h3>
+                <button class="btn btn-danger btn-icon delete-article" data-id="${sanitized.id}" aria-label="Delete article: ${sanitized.title}">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+        
+        // Add event listeners to delete buttons
+        document.querySelectorAll('.delete-article').forEach(btn => {
+          btn.addEventListener('click', () => {
+            handlers.handleDeleteArticle(btn.dataset.id);
+          });
+        });
+      }
+    };
+
+    // Initialize the application
+    async function init() {
+      // Set up event listeners
+      elements.links.viewSite.addEventListener('click', handlers.handleShowPublicView);
+      elements.links.admin.addEventListener('click', handlers.handleShowAdminView);
+      elements.links.login.addEventListener('click', handlers.handleShowLoginView);
+      elements.links.logout.addEventListener('click', handlers.handleLogout);
+      elements.forms.login.addEventListener('submit', handlers.handleLogin);
+      elements.forms.addArticle.addEventListener('submit', handlers.handleAddArticle);
+      elements.buttons.back.addEventListener('click', handlers.handleShowPublicView);
+      
+      // Load initial data
+      ui.showLoading();
+      try {
+        state.articles = await articleService.getArticles();
+        state.currentUser = storageService.getItem(STORAGE_KEYS.USER);
+        ui.updateAuthUI();
+        handlers.handleShowPublicView();
+      } catch (error) {
+        console.error('Initialization error:', error);
+        ui.showError(elements.alerts.loginError, 'Failed to load application data');
+      } finally {
+        ui.hideLoading();
+      }
+    }
+
+    // Start the app
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
